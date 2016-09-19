@@ -1,0 +1,6 @@
+[rhel6]
+name=Red Hat Enterprise Linux 6
+baseurl=file:///mnt/
+enabled=1
+gpgcheck=0
+gpgkey=file:///mnt/RPM-GPG-KEY-redhat-release

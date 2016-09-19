@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG_HOME" value="/var/log/comoyo" />
+	<%= node[:apache_tomcat][:j] %>
+	<property name="MAX_FILE_SIZE" value="1MB" />
+	<property name="MAX_HISTORY" value="500" />
+	<property name="EDR_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss}|%msg%n" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{ISO8601} %-4level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="ExceptionLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/Exception/exception.txt</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_HOME}/Exception/exception.%d{yyyyMMdd}.${INSTANCE_ID}.%i.txt</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>${EDR_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- <appender name="EDRPACKAGE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/EDR/PACKAGE/EDRPACKAGE.txt</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			rollover per hour
+			<fileNamePattern>${LOG_HOME}/EDR/PACKAGE/EDRPACKAGE.%d{yyyyMMddHH}.${INSTANCE_ID}.%i.txt</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				or whenever the file size reaches 1MB
+				<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${MAX_HISTORY}</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>${EDR_PATTERN}</pattern>
+		</encoder>
+	</appender> -->
+
+	<appender name="EDRSMS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/EDR/SMS/EDRSMS</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover per hour -->
+			<fileNamePattern>${LOG_HOME}/EDR/SMS/EDRSMS.%d{yyyyMMddHH}.${INSTANCE_ID}.%i.txt</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 1MB -->
+				<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${MAX_HISTORY}</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>${EDR_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="EDRDELIVERY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/EDR/DELIVERY/EDRDELIVERY</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover per hour -->
+			<fileNamePattern>${LOG_HOME}/EDR/DELIVERY/EDRDELIVERY.%d{yyyyMMddHH}.${INSTANCE_ID}.%i.txt</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 1MB -->
+				<maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${MAX_HISTORY}</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>${EDR_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework">
+		<level value="ERROR" />
+	</logger>
+
+	<logger name="org.hibernate">
+		<level value="ERROR" />
+	</logger>
+
+	<logger name="com.vopium.common.log.exception" additivity="false">
+		<level value="ERROR" />
+		<appender-ref ref="ExceptionLog" />
+	</logger>
+
+	<logger name="com.vopium.middleware.log.edr.pkg" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="EDRPACKAGE" />
+	</logger>
+
+	<logger name="com.vopium.middleware.log.edr.delivery" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="EDRDELIVERY" />
+	</logger>
+
+	<logger name="com.vopium.middleware.log.edr.sms" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="EDRSMS" />
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<%= node[:apache_tomcat][:push] %>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{ISO8601} %-4level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="PushLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.home}/logs/PUSH/push</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${catalina.home}/logs/PUSH/push.%d{yyyyMMdd}.${INSTANCE_ID}.%i.txt</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 1MB -->
+				<maxFileSize>5MB</maxFileSize>				
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>2</maxHistory>
+		</rollingPolicy>
+		<append>true</append>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss}|%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework">
+		<level value="ERROR" />
+	</logger>
+
+	<logger name="org.hibernate">
+		<level value="ERROR" />
+	</logger>
+	
+	<logger name="com.vopium.messaging.logger" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="PushLog" />
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

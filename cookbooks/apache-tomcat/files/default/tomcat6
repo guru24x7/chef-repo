@@ -1,0 +1,53 @@
+#!/bin/bash        
+#
+# tomcat init script
+# chkconfig: 345 99 01 
+# description: 	Start up the Tomcat servlet engine.
+
+# Source function library.
+
+
+RETVAL=$?
+CATALINA_HOME="/usr/local/apache-tomcat-6.0.36/"
+
+tomcat_pid() {
+	echo `ps -fe | grep tomcat-6 | grep -v grep | tr -s " "|cut -d" " -f2`
+}
+
+case "$1" in
+ start)
+	pid=$(tomcat_pid)
+	
+	
+        if [ -n "$pid" ]; then
+		echo -e "\e[00;31mTomcat is already running (pid: $pid)\e[00m"
+	else
+		#Starting Tomcat
+	    	echo -e "\e[00;32mStarting tomcat\e[00m"
+            	sh /usr/local/apache-tomcat-6.0.36/bin/startup.sh
+        fi
+	;;
+ stop)
+
+	pid=$(tomcat_pid)
+	
+	if [ -n "$pid" ]; then	
+                echo -e "\e[00;31mTerminating Tomcat\e[00m"
+                /usr/local/apache-tomcat-6.0.36/bin/shutdown.sh
+
+	else
+		echo -e "\e[00;31mTomcat already stop!!!\e[00m"
+        fi
+ 	;;
+ restart)  
+	sh /usr/local/apache-tomcat-6.0.36/bin/shutdown.sh  
+	sh /usr/local/apache-tomcat-6.0.36/bin/startup.sh
+	
+	;;
+ *)
+ 	echo $"Usage: $0 {start|stop|restart}" >&2
+	exit 1
+	;;
+esac
+
+exit $RETVAL
